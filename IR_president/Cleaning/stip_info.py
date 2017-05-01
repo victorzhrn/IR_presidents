@@ -19,7 +19,6 @@ all_presidents = []
 for file in os.listdir(dir):
     if file.endswith(".txt"):
         path = dir+file
-        
         file = open(path)
         content = file.read()
         soup = BeautifulSoup(content, 'html.parser')
