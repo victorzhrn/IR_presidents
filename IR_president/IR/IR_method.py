@@ -12,7 +12,6 @@ class IR_method:
     classdocs
     '''
 
-
     def __init__(self, path=None):
         '''
         Constructor
