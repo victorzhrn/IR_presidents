@@ -34,6 +34,8 @@ def main():
         elif args[0] == 'use':
             bm25 = BM25(read[4:])
             skip = SkipBigram(read[4:])
+        elif args[0] == 'b':
+            print bm25.search('John Adams')
         else:
 #             CRED = '\33[31m'
 #             CEND = '\33[0m'
@@ -43,3 +45,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
