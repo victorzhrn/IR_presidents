@@ -38,6 +38,21 @@ class Corpus:
     def __init__(self, path, N = None, avdl = None):
         with open(path) as f:
             self.corpus = json.load(f)
+        
+        corpus = {}
+        for key in self.corpus.keys():
+            k = str(key)
+            '''
+            Anchor tags are appened with the file text
+            '''
+            content = (self.corpus[key]).encode('utf-8').split()
+            title = [k[:-2]]
+            try:
+                corpus[title].append(content)
+            except KeyError:
+                corpus[title] = content
+        self.corpus = corpus
+        
         if N is None:
             self.N = self.countDocuments()
         else:
@@ -46,37 +61,23 @@ class Corpus:
             self.avdl = self.getAvdl()
         else:
             self.avdl = avdl
-            
-        self.titles = []
-        self.anchors = []
-        self.documents = []
-        
-        for key in self.corpus.keys():
-            k = str(key)
-            '''
-            TODO: fix anchor text not be able to parse here
-            '''
-            content = (self.corpus[key]).encode('utf-8').split()
-            if k.endswith('a'):
-                self.titles += [k[:-2]]
-                self.anchors += [[content]]
-            else:
-                self.documents += [content]
 
     def countDocuments(self):
-        return len(self.corpus) / 2.0
+        return len(self.corpus)
 
     def getAvdl(self):
         keys = self.corpus.keys()
         total = 0.0
         for key in keys:
-            k = str(key)
-            if k.endswith('p'):
-                total += len(self.corpus[key].split())
+            total += len(self.corpus[key].split())
         return total / self.N
-
-    def getCorpus(self):
-        return self.corpus
+    
+    def get_n(self):
+        pass
+    
+    def get_frequency_from_d(self, doc, qi):
+        return 
+        pass
 
     def printFile(self):
         pprint(self.corpus)
