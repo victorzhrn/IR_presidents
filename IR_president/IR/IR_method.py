@@ -6,8 +6,6 @@ Created on May 1, 2017
 import json
 from pprint import pprint
 import math
-import re
-import sys
 
 class IR_method:
     '''
@@ -70,8 +68,10 @@ class BM25(IR_method):
         self.N = self.countDocuments()
         self.avdl = self.getAvdl()
 
+
+
     def countDocuments(self):
-      return len(self.corpus) / 2
+      return len(self.corpus) / 2.0
 
     def search(self, q_list, fullRank=False):
         # IR_method.search(self, query, fullRank=fullRank)
@@ -79,7 +79,7 @@ class BM25(IR_method):
         for key in self.corpus.keys():
             k = str(key)
             if k.endswith('p'):
-              s = self.score(self.corpus[(key)],q_list)
+              s = self.score(self.corpus[key].split(),q_list)
               score_dict[key]=s
 
         if fullRank:
@@ -87,23 +87,23 @@ class BM25(IR_method):
 
         else:
           maxkey = None
-          maxtem = -sys.maxint
+          max_score = float('-inf')
           for k in score_dict.keys():
-            if (score_dict[key]>maxtem):
-              maxkey = key
-              maxtem = score_dict[key]
-          return {maxkey,maxtem}
+            if (score_dict[k] > max_score):
+              maxkey = k
+              max_score = score_dict[key]
+          return {maxkey, max_score}
 
     def getAvdl(self):
         keys = self.corpus.keys()
-        total = 0
+        total = 0.0
         for key in keys:
             k = str(key)
             if k.endswith('p'):
                 total += len(self.corpus[key].split())
         return total / self.N
 
-    def get_idf(self, q, base=math.e):
+    def get_idf(self, q, base=10):
         n = self.get_n(q)
         top = self.N - n + 0.5
         bottom = n + 0.5
@@ -112,14 +112,18 @@ class BM25(IR_method):
     def single_score(self, q, doc):
         idf = self.get_idf(q)
         freq = self.get_frequence(q, doc)
-        top = freq * (self.k1 + 1)
-        bottom = freq + self.k1 * (1 - self.b + self.b * (len(doc) / self.avdl))
+        top = freq * (self.k1 + 1.0)
+        bottom = freq + self.k1 * (1.0 - self.b + self.b * (len(doc) / self.avdl))
         return idf * (top / bottom)
+
+    def score(self, doc, q_list):
+        total_score = sum(self.single_score(q, doc) for q in q_list)
+        return total_score
 
     # Word occurs in N documents
     def get_n(self, q):
       keys = self.corpus.keys()
-      total = 0
+      total = 0.0
       for key in keys:
         k = str(key)
         if k.endswith('p') and q in self.corpus[key]:
@@ -129,9 +133,7 @@ class BM25(IR_method):
     def get_frequence(self, q, doc):
         return doc.count(q)
 
-    def score(self, doc, q_list):
-        total_score = sum(self.single_score(q, doc) for q in q_list)
-        return total_score
+
 
 class SkipBigram(IR_method):
     

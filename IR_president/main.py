@@ -22,7 +22,7 @@ def main():
     while True:
         read = str(sys.stdin.readline())
         args = read.split()
-        if args[0] == 'quit':
+        if args[0] == 'quit' or args[0]=='q':
             sys.exit(0)
         elif args[0] == 'help':
             print 'help'
@@ -34,11 +34,13 @@ def main():
         elif args[0] == 'use':
             bm25 = BM25(read[4:])
             skip = SkipBigram(read[4:])
+        elif args[0] == 'ba':
+            s = bm25.search('John Adams', True)
+            for se in s:
+                print se + ' '+str(s[se])
         elif args[0] == 'b':
             print bm25.search('John Adams')
         else:
-#             CRED = '\33[31m'
-#             CEND = '\33[0m'
             print  "Not a valid command: " + read.strip()
     pass
 
