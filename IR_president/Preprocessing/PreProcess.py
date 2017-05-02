@@ -35,7 +35,7 @@ def parse_one_file(f_name):
 def main():
     f_list = find_file_list()
     print f_list
-    print parse_one_file(f_list[0])kK
+    print parse_one_file(f_list[0])
 
 
 if __name__ == '__main__':
