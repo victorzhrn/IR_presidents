@@ -51,47 +51,36 @@ class Corpus:
     def printFile(self):
         pprint(self.corpus)
 
-
-
-
-
 class BM25(IR_method):
 
-    #doc is the list of word in the document
+    # doc is the list of word in the document
 
     def __init__(self, path, k1=1.2, b=0.75):
         # super(BM25, self).__init__(path)
-        IR_method.__init__(self,path)
+        IR_method.__init__(self, path)
         self.k1 = k1
         self.b = b
         self.N = self.countDocuments()
         self.avdl = self.getAvdl()
 
-
-
     def countDocuments(self):
-      return len(self.corpus) / 2.0
+        return len(self.corpus) / 2.0
 
     def search(self, q_list, fullRank=False):
-        # IR_method.search(self, query, fullRank=fullRank)
-        score_dict={}
-        for key in self.corpus.keys():
+        result = []
+        keys = self.corpus.keys()
+        for key in keys:
             k = str(key)
             if k.endswith('p'):
-              s = self.score(self.corpus[key].split(),q_list)
-              score_dict[key]=s
-
+                doc = self.corpus[key].split()
+                score = self.score(doc, q_list)
+                result += [(key, score)]
+        
+        result = sorted(result, key = lambda val: val[1], reverse=True)
         if fullRank:
-          return score_dict
-
+            return result
         else:
-          maxkey = None
-          max_score = float('-inf')
-          for k in score_dict.keys():
-            if (score_dict[k] > max_score):
-              maxkey = k
-              max_score = score_dict[key]
-          return {maxkey, max_score}
+            return result[0]
 
     def getAvdl(self):
         keys = self.corpus.keys()
@@ -121,13 +110,13 @@ class BM25(IR_method):
 
     # Word occurs in N documents
     def get_n(self, q):
-      keys = self.corpus.keys()
-      total = 0.0
-      for key in keys:
-        k = str(key)
-        if k.endswith('p') and q in self.corpus[key]:
-          total += 1
-      return total
+        keys = self.corpus.keys()
+        total = 0.0
+        for key in keys:
+            k = str(key)
+            if k.endswith('p') and q in self.corpus[key]:
+                total += 1
+        return total
 
     def get_frequence(self, q, doc):
         return doc.count(q)

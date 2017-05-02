@@ -12,17 +12,18 @@ from IR.IR_method import BM25, SkipBigram
 
 def main():
     print "Welcome to IR president encyclopedia!"
-    print os.getcwd()
+#     print os.getcwd()
     default_path = '../Data/data.json'
     
     bm25 = BM25(default_path)
     skip = SkipBigram(default_path)
     
-    
     while True:
-        read = str(sys.stdin.readline())
+        read = raw_input(">")
         args = read.split()
+        
         if args[0] == 'quit' or args[0]=='q':
+            print "Bye!"
             sys.exit(0)
         elif args[0] == 'help':
             print 'help'
@@ -35,13 +36,13 @@ def main():
             bm25 = BM25(read[4:])
             skip = SkipBigram(read[4:])
         elif args[0] == 'ba':
-            s = bm25.search('John Adams', True)
-            for se in s:
-                print se + ' '+str(s[se])
+            result = bm25.search('John Adams', True)
+            for r in result:
+                print r
         elif args[0] == 'b':
             print bm25.search('John Adams')
         else:
-            print  "Not a valid command: " + read.strip()
+            print  "Not a valid command: " + read
     pass
 
 
