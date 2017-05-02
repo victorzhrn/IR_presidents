@@ -36,7 +36,7 @@ def main():
             bm25 = BM25(read[4:])
             skip = SkipBigram(read[4:])
         elif args[0] == 'ba':
-            result = bm25.search('John Adams', True)
+            result = bm25.search('John Adams second President He was a lawyer', True)
             for r in result:
                 print r
         elif args[0] == 'b':

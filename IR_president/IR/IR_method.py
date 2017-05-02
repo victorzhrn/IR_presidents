@@ -11,7 +11,6 @@ class IR_method:
     '''
     classdocs
     '''
-
     def __init__(self, path=None):
         '''
         Constructor
@@ -36,51 +35,36 @@ class IR_method:
         self.corpus = corpus
     
 class Corpus:
-
-    def __init__(self, path):
+    def __init__(self, path, N = None, avdl = None):
         with open(path) as f:
             self.corpus = json.load(f)
-
-        # self.N = self.countDocuments()
-        # self.avdl = self.getAvdl()
-        pass
-
-    def getCorpus(self):
-        return self.corpus
-
-    def printFile(self):
-        pprint(self.corpus)
-
-class BM25(IR_method):
-
-    # doc is the list of word in the document
-
-    def __init__(self, path, k1=1.2, b=0.75):
-        # super(BM25, self).__init__(path)
-        IR_method.__init__(self, path)
-        self.k1 = k1
-        self.b = b
-        self.N = self.countDocuments()
-        self.avdl = self.getAvdl()
+        if N is None:
+            self.N = self.countDocuments()
+        else:
+            self.N = N
+        if avdl is None:
+            self.avdl = self.getAvdl()
+        else:
+            self.avdl = avdl
+            
+        self.titles = []
+        self.anchors = []
+        self.documents = []
+        
+        for key in self.corpus.keys():
+            k = str(key)
+            '''
+            TODO: fix anchor text not be able to parse here
+            '''
+            content = (self.corpus[key]).encode('utf-8').split()
+            if k.endswith('a'):
+                self.titles += [k[:-2]]
+                self.anchors += [[content]]
+            else:
+                self.documents += [content]
 
     def countDocuments(self):
         return len(self.corpus) / 2.0
-
-    def search(self, q_list, fullRank=False):
-        result = []
-        keys = self.corpus.keys()
-        for key in keys:
-            k = str(key)
-            if k.endswith('p'):
-                doc = self.corpus[key].split()
-                score = self.score(doc, q_list)
-                result += [(key, score)]
-        
-        result = sorted(result, key = lambda val: val[1], reverse=True)
-        if fullRank:
-            return result
-        else:
-            return result[0]
 
     def getAvdl(self):
         keys = self.corpus.keys()
@@ -91,9 +75,41 @@ class BM25(IR_method):
                 total += len(self.corpus[key].split())
         return total / self.N
 
+    def getCorpus(self):
+        return self.corpus
+
+    def printFile(self):
+        pprint(self.corpus)
+
+class BM25(IR_method):
+    # doc is the list of word in the document
+    def __init__(self, path, k1=1.2, b=0.75):
+        # super(BM25, self).__init__(path)
+        IR_method.__init__(self, path)
+        self.k1 = k1
+        self.b = b
+
+    def search(self, q_list, fullRank=False):
+        result = []
+        for i in range(self.corpus.N):
+            pass
+#         keys = self.corpus.keys()
+#         for key in keys:
+#             k = str(key)
+#             if k.endswith('p'):
+#                 doc = self.corpus[key].split()
+#                 score = self.score(doc, q_list)
+#                 result += [(key, score)]
+#         
+#         result = sorted(result, key = lambda val: val[1], reverse=True)
+#         if fullRank:
+#             return result
+#         else:
+#             return result[0]
+
     def get_idf(self, q, base=10):
         n = self.get_n(q)
-        top = self.N - n + 0.5
+        top = self.corpus.N - n + 0.5
         bottom = n + 0.5
         return math.log(top / bottom, base)
 
@@ -101,7 +117,7 @@ class BM25(IR_method):
         idf = self.get_idf(q)
         freq = self.get_frequence(q, doc)
         top = freq * (self.k1 + 1.0)
-        bottom = freq + self.k1 * (1.0 - self.b + self.b * (len(doc) / self.avdl))
+        bottom = freq + self.k1 * (1.0 - self.b + self.b * (len(doc) / self.corpus.avdl))
         return idf * (top / bottom)
 
     def score(self, doc, q_list):
@@ -120,8 +136,6 @@ class BM25(IR_method):
 
     def get_frequence(self, q, doc):
         return doc.count(q)
-
-
 
 class SkipBigram(IR_method):
     
