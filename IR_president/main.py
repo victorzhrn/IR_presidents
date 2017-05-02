@@ -8,8 +8,7 @@ import sys, os
 from IR.IR_method import BM25, SkipBigram
 # path = ""
 # 
-# with open(path) as f:
-#     corpus = json.load(f)
+
 
 def main():
     print "Welcome to IR president encyclopedia!"
