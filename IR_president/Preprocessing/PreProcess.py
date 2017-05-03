@@ -80,10 +80,9 @@ def get_content(soup, file):
     paragraph_list = []
     for content in contents:
         paragraph = ""
-        count = 0
         for string in content.stripped_strings:
-            paragraph += string.encode('ascii', 'ignore')
-        paragraph = re.sub('[\[][0-9]+[\]]', ' ', paragraph)
+            paragraph += string.encode('ascii', 'ignore') + ' '
+        paragraph = re.sub('[\[[][\ ][0-9]+[\ ]]', ' ', paragraph)
         paragraph_list.append(paragraph)
     paragraph_dict[key] = paragraph_list
     with open(key + '_paragraph.json', 'w') as fp:
