@@ -53,9 +53,12 @@ def parse_one_file(f_name):
                     if title is not None:
                         external_link_list.append((href.encode('ascii', 'ignore'), title.encode('ascii', 'ignore')))
                 elif href.startswith("#"):
-                    if title is not None:
-                        internal_link_list.append(href.encode('ascii', 'ignore'))
-
+                    internal_link_list.append(href.encode('ascii', 'ignore')[1:])
+    link_dict = {}
+    link_dict[f_name[:-4] + "external"] = external_link_list
+    link_dict[f_name[:-4] + "internal"] = internal_link_list
+    with open(f_name[:-4] + '_links.json', 'w') as fp:
+        json.dump(link_dict, fp)
     with open(f_name[:-4] + '_external.json', 'w') as fp:
         json.dump(external_link_list, fp)
     with open(f_name[:-4] + '_internal.json', 'w') as fp:
