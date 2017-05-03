@@ -43,6 +43,9 @@ def parse_one_file(f_name):
     file = open(f_path)
     soup = BeautifulSoup(file, 'html.parser')
     file.close()
+    return soup
+
+def extract_links(soup, f_name):
     a_tag = soup.find_all('a')
     external_link_list = []
     internal_link_list = []
@@ -58,33 +61,43 @@ def parse_one_file(f_name):
                     internal_link_list.append(href.encode('ascii', 'ignore'))
     link_dict = {}
     link_dict[f_name[:-4] + "external"] = external_link_list
-    link_dict[f_name[:-4] + "internal"] = internal_link_list[1:]
+    internal_link_list = internal_link_list[1:]
+    link_dict[f_name[:-4] + "internal"] = internal_link_list
     # uncomment this part for deploy
-    # with open(f_name[:-4] + '_links.json', 'w') as fp:
-    #     json.dump(link_dict, fp)
-    # with open(f_name[:-4] + '_external.json', 'w') as fp:
-    #     json.dump(external_link_list, fp)
-    # with open(f_name[:-4] + '_internal.json', 'w') as fp:
-    #     json.dump(internal_link_list, fp)
+    with open(f_name[:-4] + '_links.json', 'w') as fp:
+        json.dump(link_dict, fp)
+    with open(f_name[:-4] + '_external.json', 'w') as fp:
+        json.dump(external_link_list, fp)
+    with open(f_name[:-4] + '_internal.json', 'w') as fp:
+        json.dump(internal_link_list, fp)
 
-    return external_link_list, internal_link_list
+    # return external_link_list, internal_link_list
 
-def get_internal_link_info(link):
-
+def get_content(soup, file):
+    key = file[:-4]
+    contents = soup.find(id='mw-content-text').find_all('p')
+    paragraph_dict = {}
+    paragraph_list = []
+    for content in contents:
+        paragraph = ""
+        count = 0
+        for string in content.stripped_strings:
+            paragraph += string.encode('ascii', 'ignore')
+        paragraph = re.sub('[\[][0-9]+[\]]', ' ', paragraph)
+        paragraph_list.append(paragraph)
+    paragraph_dict[key] = paragraph_list
+    with open(key + '_paragraph.json', 'w') as fp:
+        json.dump(paragraph_dict, fp)
 
 
 
 def main():
     f_list = find_file_list()
-    # print f_list
-    # for file in f_list:
-    #     external_link, internal_link = parse_one_file(file)
-    #     print file
-    #     print "ext", len(external_link)
-    #     print "int", len(internal_link)
-    e_links, i_links = parse_one_file(f_list[0])
-    print len(e_links)
-    print i_links
+    for file in f_list:
+        soup = parse_one_file(file)
+        extract_links(soup, file)
+        get_content(soup, file)
+
 
 
 
