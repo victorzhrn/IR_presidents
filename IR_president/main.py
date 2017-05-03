@@ -5,7 +5,7 @@ Created on May 1, 2017
 '''
 
 import sys, os
-from IR.IR_method import BM25, SkipBigram
+from IR.IR_method import BM25, SkipBigram, Corpus
 # path = ""
 # 
 
@@ -14,9 +14,9 @@ def main():
     print "Welcome to IR president encyclopedia!"
 #     print os.getcwd()
     default_path = '../Data/data.json'
-    
-    bm25 = BM25(default_path)
-    skip = SkipBigram(default_path)
+    corp = Corpus(default_path)
+    bm25 = BM25(corp)
+    skip = SkipBigram(corp)
     
     while True:
         read = raw_input(">")

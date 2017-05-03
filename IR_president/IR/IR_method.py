@@ -39,7 +39,7 @@ class BM25(IR_method):
     def search(self, q_list, fullRank=False):
         result = []
         for title in self.corpus.get_titles():
-            score = self.score(self.corpus, q_list)
+            score = self.score(self.corpus.get_doc(title), q_list)
             result += [(title, score)]
         result = sorted(result, key=lambda val: val[1], reverse=True)
         if fullRank:
@@ -67,7 +67,7 @@ class BM25(IR_method):
         for qi in q_list:
             n = self.corpus.get_n(qi)
             N = self.corpus.get_N()
-            idf = self.get_idf(qi, n, N, base)
+            idf = self.get_idf(n, N, base)
             avdl = self.corpus.avdl
             freq = self.corpus.get_freq(qi, doc)
             total_score += self.single_score(idf, freq, avdl, doc, n, N, base)
@@ -127,7 +127,7 @@ class Corpus:
         return self.N
     
     def get_freq(self, qi, doc):
-        return doc.conut(qi)
+        return doc.count(qi)
     
     def get_doc_avdl(self, doc):
         return float(len(doc)) / self.avdl
