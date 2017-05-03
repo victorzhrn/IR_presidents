@@ -27,6 +27,9 @@ def need_to_ignore(href):
     #     href.startswith("/w/"):
     #     return True
     if re.match(r'.wiki.*[:]', href) or href.startswith("#cite") or \
+            href.startswith("#CITE") or href.startswith("#See_also") or \
+            href.startswith("#Notes") or href.startswith("#References") or \
+            href.startswith("#External_links") or \
             href.startswith("http") or href.startswith("#mw") or \
             href.startswith("//") or href.startswith("/w/") or \
             href.startswith("/wiki/International_Standard_Book_Number"):
@@ -40,7 +43,6 @@ def parse_one_file(f_name):
     file = open(f_path)
     soup = BeautifulSoup(file, 'html.parser')
     file.close()
-    title = soup.title.string
     a_tag = soup.find_all('a')
     external_link_list = []
     internal_link_list = []
@@ -64,11 +66,20 @@ def parse_one_file(f_name):
     with open(f_name[:-4] + '_internal.json', 'w') as fp:
         json.dump(internal_link_list, fp)
 
+    return external_link_list, internal_link_list
+
+
+
+
+
 def main():
     f_list = find_file_list()
-    print f_list
+    # print f_list
     for file in f_list:
-        parse_one_file(file)
+        external_link, internal_link = parse_one_file(file)
+        print file
+        print "ext", len(external_link)
+        print "int", len(internal_link)
 
 
 if __name__ == '__main__':
