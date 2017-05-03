@@ -55,19 +55,21 @@ def parse_one_file(f_name):
                     if title is not None:
                         external_link_list.append((href.encode('ascii', 'ignore'), title.encode('ascii', 'ignore')))
                 elif href.startswith("#"):
-                    internal_link_list.append(href.encode('ascii', 'ignore')[1:])
+                    internal_link_list.append(href.encode('ascii', 'ignore'))
     link_dict = {}
     link_dict[f_name[:-4] + "external"] = external_link_list
-    link_dict[f_name[:-4] + "internal"] = internal_link_list
-    with open(f_name[:-4] + '_links.json', 'w') as fp:
-        json.dump(link_dict, fp)
-    with open(f_name[:-4] + '_external.json', 'w') as fp:
-        json.dump(external_link_list, fp)
-    with open(f_name[:-4] + '_internal.json', 'w') as fp:
-        json.dump(internal_link_list, fp)
+    link_dict[f_name[:-4] + "internal"] = internal_link_list[1:]
+    # uncomment this part for deploy
+    # with open(f_name[:-4] + '_links.json', 'w') as fp:
+    #     json.dump(link_dict, fp)
+    # with open(f_name[:-4] + '_external.json', 'w') as fp:
+    #     json.dump(external_link_list, fp)
+    # with open(f_name[:-4] + '_internal.json', 'w') as fp:
+    #     json.dump(internal_link_list, fp)
 
     return external_link_list, internal_link_list
 
+def get_internal_link_info(link):
 
 
 
@@ -75,11 +77,15 @@ def parse_one_file(f_name):
 def main():
     f_list = find_file_list()
     # print f_list
-    for file in f_list:
-        external_link, internal_link = parse_one_file(file)
-        print file
-        print "ext", len(external_link)
-        print "int", len(internal_link)
+    # for file in f_list:
+    #     external_link, internal_link = parse_one_file(file)
+    #     print file
+    #     print "ext", len(external_link)
+    #     print "int", len(internal_link)
+    e_links, i_links = parse_one_file(f_list[0])
+    print len(e_links)
+    print i_links
+
 
 
 if __name__ == '__main__':
