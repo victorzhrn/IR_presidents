@@ -10,6 +10,7 @@ import re
 
 # global variables
 f_dir = "../../Presidents"
+target_dir = "../../Data/"
 
 
 def find_file_list():
@@ -66,12 +67,12 @@ def extract_links(soup, f_name):
     internal_link_list = internal_link_list[1:]
     link_dict[f_name[:-4] + "internal"] = internal_link_list
     # uncomment this part for deploy
-    with open(f_name[:-4] + '_links.json', 'w') as fp:
-        json.dump(link_dict, fp)
-    with open(f_name[:-4] + '_external.json', 'w') as fp:
-        json.dump(external_link_list, fp)
-    with open(f_name[:-4] + '_internal.json', 'w') as fp:
-        json.dump(internal_link_list, fp)
+#     with open(f_name[:-4] + '_links.json', 'w') as fp:
+#         json.dump(link_dict, fp)
+#     with open(f_name[:-4] + '_external.json', 'w') as fp:
+#         json.dump(external_link_list, fp)
+#     with open(f_name[:-4] + '_internal.json', 'w') as fp:
+#         json.dump(internal_link_list, fp)
 
     return external_link_list, external_link_titles, internal_link_list
 
@@ -87,8 +88,8 @@ def get_content(soup, file):
         paragraph = re.sub('[\[[][\ ][0-9]+[\ ]]', ' ', paragraph)
         paragraph_list.append(paragraph)
     paragraph_dict[key] = paragraph_list
-    with open(key + '_paragraph.json', 'w') as fp:
-        json.dump(paragraph_dict, fp)
+#     with open(key + '_paragraph.json', 'w') as fp:
+#         json.dump(paragraph_dict, fp)
 
     return paragraph_list
 
@@ -104,7 +105,7 @@ def main():
         president_dict['name'] = file[:-4]
         president_dict['internal_links'] = i_links
         president_dict['paragraphes'] = p_list
-        with open(file[:-4] + '.json', 'w') as fp:
+        with open(target_dir + file[:-4] + '.json', 'w') as fp:
             json.dump(president_dict, fp)
 
 
