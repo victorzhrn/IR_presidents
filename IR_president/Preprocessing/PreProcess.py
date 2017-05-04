@@ -49,6 +49,7 @@ def extract_links(soup, f_name):
     a_tag = soup.find_all('a')
     external_link_list = []
     internal_link_list = []
+    external_link_titles = []
     for a in a_tag:
         if a.get('href') is not None:
             href = a.get('href')
@@ -57,8 +58,9 @@ def extract_links(soup, f_name):
                 if href.startswith("/wiki"):
                     if title is not None:
                         external_link_list.append((href.encode('ascii', 'ignore'), title.encode('ascii', 'ignore')))
+                        external_link_titles.append(title.encode('ascii', 'ignore'))
                 elif href.startswith("#"):
-                    internal_link_list.append(href.encode('ascii', 'ignore'))
+                    internal_link_list.append(href.encode('ascii', 'ignore')[1:].replace('_', ' '))
     link_dict = {}
     link_dict[f_name[:-4] + "external"] = external_link_list
     internal_link_list = internal_link_list[1:]
@@ -71,7 +73,7 @@ def extract_links(soup, f_name):
     with open(f_name[:-4] + '_internal.json', 'w') as fp:
         json.dump(internal_link_list, fp)
 
-    # return external_link_list, internal_link_list
+    return external_link_list, external_link_titles, internal_link_list
 
 def get_content(soup, file):
     key = file[:-4]
@@ -81,21 +83,30 @@ def get_content(soup, file):
     for content in contents:
         paragraph = ""
         for string in content.stripped_strings:
-            paragraph += string.encode('ascii', 'ignore') + ' '
+            paragraph += string.encode('ascii', 'ignore').replace('\"', ' ') + ' '
         paragraph = re.sub('[\[[][\ ][0-9]+[\ ]]', ' ', paragraph)
         paragraph_list.append(paragraph)
     paragraph_dict[key] = paragraph_list
     with open(key + '_paragraph.json', 'w') as fp:
         json.dump(paragraph_dict, fp)
 
+    return paragraph_list
+
 
 
 def main():
     f_list = find_file_list()
     for file in f_list:
+        president_dict = {}
         soup = parse_one_file(file)
-        extract_links(soup, file)
-        get_content(soup, file)
+        e_links, e_titles, i_links = extract_links(soup, file)
+        p_list = get_content(soup, file)
+        president_dict['name'] = file[:-4]
+        president_dict['internal_links'] = i_links
+        president_dict['paragraphes'] = p_list
+        with open(file[:-4] + '.json', 'w') as fp:
+            json.dump(president_dict, fp)
+
 
 
 
