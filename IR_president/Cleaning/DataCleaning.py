@@ -4,8 +4,6 @@ Created on May 1, 2017
 @author: yangr
 '''
 
-
-
 from bs4 import BeautifulSoup
 import os
 import json, re
