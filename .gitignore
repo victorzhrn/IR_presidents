@@ -2,4 +2,4 @@
 .pydevproject
 .idea
 *.pyc
-*.json
+.json
