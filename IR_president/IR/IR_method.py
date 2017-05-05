@@ -136,7 +136,7 @@ class NGram(Corpus):
             else:
                 self.corpus = parser(raw_path)
         else:
-            self.corp = self.load_model(model_path, n, data_type)
+            self.corpus = self.load_model(model_path, n, data_type)
         self.N = self.count_documents()
         self.avdl = self.get_avdl()
     
