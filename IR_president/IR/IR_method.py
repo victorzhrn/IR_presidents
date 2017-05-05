@@ -27,8 +27,7 @@ class IR_method:
         pass
     
     def setCorpus(self, corpus):
-        self.corpus = corpus
-        
+        self.corpus = corpus    
     
 class BM25(IR_method):
     # doc is the list of word in the document
@@ -73,19 +72,8 @@ class BM25(IR_method):
             avdl = self.corpus.avdl
             freq = self.corpus.get_freq(qi, doc)
             total_score += self.single_score(idf, freq, avdl, doc, n, N, base)
-        return total_score
-
-
-class ngram(IR_method):
-    
-    def search(self, query, fullRank=False, skip=2):
-        IR_method.search(self, query, fullRank=fullRank)
+        return total_score       
         
-
-
-        
-        
-
 class Corpus:
     def __init__(self, path):
         with open(path) as f:
@@ -98,7 +86,7 @@ class Corpus:
             '''
             Anchor tags are appended with the file text
             '''
-            content = (self.corpus[key]).encode('utf-8').split()
+            content = (self.corpus[key]).encode('utf-8').lower().split()
             title = k[:-2]
             try:
                 corpus[title].append(content)
@@ -139,22 +127,21 @@ class Corpus:
     
     def get_doc_avdl(self, doc):
         return float(len(doc)) / self.avdl
-    
-    
-    
+     
 class NGram(Corpus):
     def __init__(self, n=1, raw_path=None, model_path=None, parser=None, data_type='utf-8-sig'):
-            if raw_path is not None:
-                if parser is None:
-                    self.corpus = self.load_raw(raw_path)
-                else:
-                    self.corpus = parser(raw_path)
+        if raw_path is not None:
+            if parser is None:
+                self.corpus = self.load_raw(raw_path)
             else:
-                self.corp = self.load_model(model_path, n,data_type)
-            self.N = self.count_documents()
-            self.avdl = self.get_avdl()
-            
-    def parse(self, doc, n):
+                self.corpus = parser(raw_path)
+        else:
+            self.corp = self.load_model(model_path, n, data_type)
+        self.N = self.count_documents()
+        self.avdl = self.get_avdl()
+    
+    @staticmethod
+    def parse(doc, n):
         split = []
         doc_len = len(doc)
         if n == 1:
@@ -182,34 +169,4 @@ class NGram(Corpus):
     def write(self, path):
         with open(path, 'w') as fp:
             json.dump(self.corpus, fp)        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
