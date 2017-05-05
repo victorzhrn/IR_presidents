@@ -21,18 +21,18 @@ class MyTestCase(unittest.TestCase):
 #         print len(corp.documents)
     
     def test_bm25(self):
-        path = '../../Data/data.json'
-        corp = Corpus(path)
-        bm25 = BM25(corp)
+#         path = '../../Data/data.json'
+#         corp = Corpus(path)
+        bm25 = BM25("Test")
         n_p = 40000
         n_l = 300
         N = 500000
         p_idf = bm25.get_idf(n_p, N, 10)
         l_idf = bm25.get_idf(n_l, N, 10) 
         president = bm25.test_scoring(p_idf, 15, 0.9, n_p, N, 10)
-        lincoln = bm25.test_scoring(l_idf, 25, 0.9, n_l, N, 10 )
+        lincoln = bm25.test_scoring(l_idf, 25, 0.9, n_l, N, 10)
         
-        print president+lincoln
+        self.assertAlmostEqual(round(president + lincoln, 2) , 8.96)
     
 
 

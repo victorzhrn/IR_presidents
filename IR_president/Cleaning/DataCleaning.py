@@ -8,7 +8,9 @@ Created on May 1, 2017
 
 from bs4 import BeautifulSoup
 import os
-import json
+import json, re
+
+
 
 def find_type(type, soup):
     all_p = ""
@@ -38,4 +40,30 @@ def clean(filePath, writePath):
     with open(parsedDir+ 'data.json', 'w') as fp:
         json.dump(dict, fp)
     
-        
+    
+import codecs
+fi = json.load(codecs.open('data.json', 'r', 'utf-8-sig'))
+
+
+data = {}
+for key in fi.keys():
+    content = " ".join(fi[key]['anchors'])
+    content2 = " ".join(fi[key]['p'])
+    total = content + ' ' + content2
+    strip = re.sub(r'[^\w]', ' ', total)
+    
+    
+stop_list = {}
+from nltk.corpus import stopwords
+stop = set(stopwords.words('english'))
+for key in data.keys():
+    p = data[key]
+    word_list = [i for i in p.lower().split() if i not in stop]
+    stop_list[key] = word_list
+    
+with open('data_no_stop.json', 'w') as fp:
+    json.dump(data, fp)
+
+
+    
+    

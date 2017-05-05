@@ -27,12 +27,13 @@ class IR_method:
     
     def setCorpus(self, corpus):
         self.corpus = corpus
+        
     
 class BM25(IR_method):
     # doc is the list of word in the document
-    def __init__(self, path, k1=1.2, b=0.75):
+    def __init__(self, corpus, k1=1.2, b=0.75):
         # super(BM25, self).__init__(path)
-        IR_method.__init__(self, path)
+        IR_method.__init__(self, corpus)
         self.k1 = k1
         self.b = b
 
@@ -74,10 +75,15 @@ class BM25(IR_method):
         return total_score
 
 
-class SkipBigram(IR_method):
+class ngram(IR_method):
     
-    def search(self, query, fullRank=False):
+    def search(self, query, fullRank=False, skip = 2):
         IR_method.search(self, query, fullRank=fullRank)
+        
+
+
+        
+        
 
 class Corpus:
     def __init__(self, path):
@@ -86,6 +92,7 @@ class Corpus:
             f.close()
         corpus = {}
         for key in self.corpus.keys():
+            
             k = str(key)
             '''
             Anchor tags are appended with the file text
@@ -131,3 +138,68 @@ class Corpus:
     
     def get_doc_avdl(self, doc):
         return float(len(doc)) / self.avdl
+    
+    
+    
+    class NGram(object):
+        
+        def __init__(self, n = 1, raw_path= None, model_path = None, parser= None):
+            if raw_path is not None:
+                if parser is None:
+                    self.corpus = self.load_raw(raw_path)
+                else:
+                    self.corpus = parser(raw_path)
+            else:
+                self.corp = self.load_model(model_path)
+        
+        def parse(self, doc):
+            
+            pass
+        
+        def parse_all(self, path):
+            pass
+        
+        def load_raw(self, path):
+            pass
+        
+        def load_model(self, path):
+            pass
+        
+        def write(self, path):
+            pass
+        
+        def flaten_list(self, ls):
+            
+            pass
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
