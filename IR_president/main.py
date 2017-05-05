@@ -6,16 +6,23 @@ Created on May 1, 2017
 
 import sys
 from IR.IR_method import BM25, NGram
-# path = ""
-# 
-
-
 
 def print_call(doc):
     print doc
 #     for val in doc:
 #         print val
 
+def parse(doc, n):
+        split = []
+        doc_len = len(doc)
+        if n == 1:
+            return doc
+        elif n > doc_len:
+            raise Exception('Not enough words!')
+        else:
+            for i in range(doc_len - n + 1):
+                split += [doc[i: i + n]]
+            return split + parse(doc, n - 1)
 def main():
     print "Welcome to IR president encyclopedia!"
 #     print os.getcwd()
@@ -50,16 +57,13 @@ def main():
             if args[1] == '-a':
                 is_all = True
                 arg_num = 2
-            query = NGram.parse(args[arg_num:], 2)
+            query = parse(args[arg_num:], 2) + args[arg_num:]
             print_call(skip.search(query, is_all))
         elif args[0] == 'use':
             bm25 = BM25(read[4:])
             skip = NGram(model_path=read[4:], n=2)
         else:
             print  "Not a valid command: " + read
-
-
-
 
 if __name__ == '__main__':
     main()

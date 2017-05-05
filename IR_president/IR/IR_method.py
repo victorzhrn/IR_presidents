@@ -140,8 +140,7 @@ class NGram(Corpus):
         self.N = self.count_documents()
         self.avdl = self.get_avdl()
     
-    @staticmethod
-    def parse(doc, n):
+    def parse(self, doc, n):
         split = []
         doc_len = len(doc)
         if n == 1:
@@ -151,7 +150,7 @@ class NGram(Corpus):
         else:
             for i in range(doc_len - n + 1):
                 split += [doc[i: i + n]]
-            return split
+            return split + self.parse(doc, n-1)
         
     def parse_all(self, path, n, data_type):
         fi = json.load(codecs.open(path, 'r', data_type))
