@@ -6,6 +6,7 @@ Created on May 1, 2017
 import json
 from pprint import pprint
 import math
+import codecs
 
 class IR_method:
     '''
@@ -77,7 +78,7 @@ class BM25(IR_method):
 
 class ngram(IR_method):
     
-    def search(self, query, fullRank=False, skip = 2):
+    def search(self, query, fullRank=False, skip=2):
         IR_method.search(self, query, fullRank=fullRank)
         
 
@@ -141,37 +142,46 @@ class Corpus:
     
     
     
-    class NGram(object):
-        
-        def __init__(self, n = 1, raw_path= None, model_path = None, parser= None):
+class NGram(Corpus):
+    def __init__(self, n=1, raw_path=None, model_path=None, parser=None, data_type='utf-8-sig'):
             if raw_path is not None:
                 if parser is None:
                     self.corpus = self.load_raw(raw_path)
                 else:
                     self.corpus = parser(raw_path)
             else:
-                self.corp = self.load_model(model_path)
-        
-        def parse(self, doc):
+                self.corp = self.load_model(model_path, n,data_type)
+            self.N = self.count_documents()
+            self.avdl = self.get_avdl()
             
-            pass
+    def parse(self, doc, n):
+        split = []
+        doc_len = len(doc)
+        if n == 1:
+            return doc
+        elif n > doc_len:
+            raise Exception('Not enough words!')
+        else:
+            for i in range(doc_len - n + 1):
+                split += [doc[i: i + n]]
+            return split
         
-        def parse_all(self, path):
-            pass
+    def parse_all(self, path, n, data_type):
+        fi = json.load(codecs.open(path, 'r', data_type))
+        corpus = {}
+        for key in fi.keys():
+            corpus[key] = self.parse(fi[key], n)
+        return corpus    
         
-        def load_raw(self, path):
-            pass
+    def load_raw(self, path):
+        pass
         
-        def load_model(self, path):
-            pass
+    def load_model(self, path, n, data_type):
+        self.corpus = self.parse_all(path, n, data_type)
         
-        def write(self, path):
-            pass
-        
-        def flaten_list(self, ls):
-            
-            pass
-        
+    def write(self, path):
+        with open(path, 'w') as fp:
+            json.dump(self.corpus, fp)        
         
         
         
