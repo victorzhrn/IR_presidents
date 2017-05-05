@@ -18,13 +18,14 @@ def parse(doc, n):
         if n == 1:
             return doc
         elif n > doc_len:
-            raise Exception('Not enough words!')
+            raise Exception('Not enough words! Type help to see available command')
         else:
             for i in range(doc_len - n + 1):
                 split += [doc[i: i + n]]
             return split + parse(doc, n - 1)
 def main():
     print "Welcome to IR president encyclopedia!"
+    print "Type 'help' to see available command"
 #     print os.getcwd()
     default_bm_path = '../Data/data_no_stop.json'
     default_skip_path = '../Data/data_nosym_split.json'
@@ -42,7 +43,8 @@ def main():
             print "Bye!"
             sys.exit(0)
         elif args[0] == 'help':
-            print 'help'
+            print 'bm25: bm  <-a> <query>'
+            print 'skipBigram: sk <-a> <query>'
             pass
         elif args[0] == 'bm':
             is_all = False
